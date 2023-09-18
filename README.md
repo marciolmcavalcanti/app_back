@@ -30,8 +30,8 @@ Para utilizar esta API, siga os passos abaixo:
 
 ## Documentação Swagger
 
-Para obter a documentação completa desta API no estilo Swagger, acesse: 
-[http://localhost:5000//openapi/swagger#/](http://localhost:5000//openapi/swagger#/)
+Para obter a documentação completa desta API no estilo Swagger,  
+[use este link](http://localhost:5000//openapi/swagger#/)
 
 ## Notas de Versão
 
@@ -42,4 +42,4 @@ Para obter a documentação completa desta API no estilo Swagger, acesse:
 
 ## Autor
 
-Este projeto foi desenvolvido por Marcio Motta e pode ser encontrado no [GitHub](https://github.com/marciolmcavalcanti/mvp_back).
+Este projeto foi desenvolvido por Marcio Motta e pode ser encontrado no [GitHub](https://github.com/marciolmcavalcanti/app_back).
