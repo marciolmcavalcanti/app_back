@@ -30,8 +30,7 @@ Para utilizar esta API, siga os passos abaixo:
 
 ## Documentação Swagger
 
-Para obter a documentação completa desta API no estilo Swagger,  
-[use este link](http://localhost:5000//openapi/swagger#/)
+Para obter a documentação completa desta API no estilo Swagger, [use este link](http://localhost:5000//openapi/swagger#/)
 
 ## Notas de Versão
 
