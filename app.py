@@ -33,21 +33,19 @@ def home():
     return redirect('/openapi/swagger')
 
 
-# Carrega o favicon da aplicação
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory('static', 'favicon.ico', mimetype='image/x-icon')
-
-
 # Adiciona um Bolão
 @app.post('/add_bolao', tags=[bolao_tag],
           responses={"200": BolaoViewSchema, "409": ErrorSchema, "400": ErrorSchema})
 def add_bolao(form: BolaoSchema):
+    """Adiciona um novo bolão
+
+    Retorna uma representação de um bolão.
+    """
     
     bolao = Bolao(
-        nome = request.form.get("nome"),
-        qtd_cotas = int(request.form.get("qtd_cotas")),
-        valor = request.form.get("valor")
+        nome=request.form.get("nome"),
+        qtd_cotas=int(request.form.get("cotas")),
+        valor=request.form.get("valor")
     )
 
     logger.debug(f"Adicionando um Bolão: '{bolao.nome}'")
@@ -67,7 +65,8 @@ def add_bolao(form: BolaoSchema):
     except IntegrityError as e:
         # Ocorreu duplicidade do nome
         error_msg = "Um Bolão de mesmo nome já existe na base!"
-        return {"mensagem": error_msg}, 409    
+        logger.warning(f"Erro ao adicionar bolão '{bolao.nome}', {error_msg}")
+        return {"mesage": error_msg}, 409 
     
     except Exception as e:
         # Se erro não previsto
@@ -80,7 +79,7 @@ def add_bolao(form: BolaoSchema):
 @app.get('/boloes', tags=[bolao_tag],
          responses={"200": ListagemBoloesSchema, "404": ErrorSchema})
 def get_boloes():
-    """Faz a busca por todos os Produto cadastrados
+    """Faz a busca por todos os Bolões cadastrados
 
     Retorna uma representação da listagem de Bolões.
     """
@@ -89,12 +88,12 @@ def get_boloes():
     # cria conexão com a base
     session = Session()
 
-    # fazo a busca por todos
+    # faz a busca por todos
     boloes = session.query(Bolao).all()        
 
     if not boloes:
         # se não há bolões cadastrados retorna vazio
-        return {"bolões": []}, 200
+        return {"boloes": []}, 200
     else:
         logger.debug(f"%d Bolões encontrados" % len(boloes))
         # retorna a representação de bolão
@@ -104,11 +103,12 @@ def get_boloes():
 # Busca um determinado Bolão cadastrado
 @app.get('/bolao', tags=[bolao_tag],
          responses={"200": BolaoViewSchema, "404": ErrorSchema})
-def get_bolao(query: BolaoBuscaSchema):
-    """Faz a busca por um Bolão a partir do id do bolão
+def get_bolao(query: BolaoBuscaSchemaByName):
+    """Faz a busca por um Bolão a partir do nome do bolão
 
     Retorna uma representação dos bolões e participantes associados.
     """
+    # bolao_nome = query.nome
     bolao_nome = query.nome
     logger.debug(f"Coletando dados sobre bolão #{bolao_nome}")
 
@@ -116,46 +116,44 @@ def get_bolao(query: BolaoBuscaSchema):
     session = Session()
 
     # fazendo a busca
-    bolao = session.query(Bolao).filter(Bolao.nome == bolao_nome).first()
+    boloes = session.query(Bolao).filter(Bolao.nome == bolao_nome).all()
 
-    if not bolao:
-        # se o bolão não foi encontrado
-        error_msg = "Bolão não encontrado na base!"
-        logger.warning(f"Erro ao buscar bolão '{bolao_nome}', {error_msg}")
-        return {"message": error_msg}, 404
+    if not boloes:
+        # se não há bolões cadastrados retorna vazio
+        return {"boloes": []}, 200
     else:
         # retorna a representação de produto
-        logger.debug(f"Bolão encontrado: '{bolao.nome}'")        
-        return apresenta_bolao(bolao), 200
+        logger.debug(f"Bolão encontrado: '{bolao_nome}'")        
+        return apresenta_boloes(boloes), 200
 
 
 # Deleta um Bolão cadastrado
 @app.delete('/bolao', tags=[bolao_tag],
             responses={"200": BolaoDelSchema, "404": ErrorSchema})
-def del_bolao(query: BolaoBuscaSchema):
-    """Deleta um Bolão a partir do nome de bolão informado
+def del_bolao(query: BolaoBuscaSchemaById):
+    """Deleta um Bolão a partir do id do bolão informado
 
     Retorna uma mensagem de confirmação da remoção.
     """
-    bolao_nome = unquote(unquote(query.nome))
-    logger.debug(f"Deletando dados do Bolão #{bolao_nome}")
+    bolao_id = query.id
+    logger.debug(f"Deletando dados do Bolão #{bolao_id}")
 
     # criando conexão com a base
     session = Session()
 
     # fazendo a remoção
-    count = session.query(Bolao).filter(Bolao.nome == bolao_nome).delete()
+    count = session.query(Bolao).filter(Bolao.id == bolao_id).delete()
     session.commit()
 
     if count:
         # retorna a representação da mensagem de confirmação
-        logger.debug(f"Deletado o Bolão #{bolao_nome}")
-        return {"message": "Bolão removido", "nome": bolao_nome}
+        logger.debug(f"Deletado o Bolão #{bolao_id}")
+        return {"message": "Bolão removido", "nome": bolao_id}
     else:
         # se o bolão não foi encontrado
         error_msg = "Bolão não encontrado na base!"
-        logger.warning(f"Erro ao deletar o Bolão #'{bolao_nome}', {error_msg}")
-        return {"mesage": error_msg}, 404
+        logger.warning(f"Erro ao deletar o Bolão #'{bolao_id}', {error_msg}")
+        return {"message": error_msg}, 404
     
 
 # Adiciona um Participante a um bolão
@@ -166,7 +164,7 @@ def add_participante(form: ParticipanteSchema):
 
     Retorna uma representação dos bolões e participantes associados.
     """
-    bolao_id  = int(form.bolao_id)
+    bolao_id = int(form.bolao_id)
     logger.debug(f"Adicionando participante ao bolão #{bolao_id}")
 
     # criando conexão com a base
@@ -179,7 +177,7 @@ def add_participante(form: ParticipanteSchema):
         # se bolão não encontrado
         error_msg = "Bolão não encontrado na base!"
         logger.warning(f"Erro ao adicionar participante ao bolão '{bolao_id}', {error_msg}")
-        return {"mesage": error_msg}, 404
+        return {"message": error_msg}, 404
 
     # criando o Participante
     nome = form.nome

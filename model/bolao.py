@@ -3,14 +3,15 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from typing import Union
 
-from  model import Base, Participante
+from model import Base, Participante
 
 
 class Bolao(Base):
     __tablename__ = 'bolao'
 
     id = Column("pk_bolao", Integer, primary_key=True)
-    nome = Column(String(140), unique=True)
+    nome = Column(String(140))
+    # nome = Column(String(140), unique=True)
     qtd_cotas = Column(Integer)
     valor = Column(Float)
     data_insercao = Column(DateTime, default=datetime.now())
@@ -21,8 +22,8 @@ class Bolao(Base):
     # de reconstruir esse relacionamento.
     participantes = relationship("Participante")
 
-    def __init__(self, nome:str, qtd_cotas:int, valor:float,
-                 data_insercao:Union[DateTime, None] = None):
+    def __init__(self, nome: str, qtd_cotas: int, valor: float,
+                 data_insercao: Union[DateTime, None] = None):
         """
         Cria um Bolão
 
@@ -40,8 +41,7 @@ class Bolao(Base):
         if data_insercao:
             self.data_insercao = data_insercao
 
-    def adiciona_participante(self, participante:Participante):
+    def adiciona_participante(self, participante: Participante):
         """ Adiciona um novo participante ao Bolão
         """
         self.participantes.append(participante)
-

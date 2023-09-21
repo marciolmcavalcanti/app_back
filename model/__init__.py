@@ -9,7 +9,6 @@ from model.bolao import Bolao
 
 import os
 
-
 db_path = "database/"
 # Cria o diretório da base de dados caso não exista
 if not os.path.exists(db_path):

@@ -1,6 +1,6 @@
-# API Bolões para Loterias
+# Back-end MVP Sprint I - API de Bolões para Loterias
 
-Esta API administra bolões para loterias, permitindo incluir, consultar e excluir bolões e seus respectivos participantes cadastrados.
+Esta API administra uma lista de bolões para loterias, permitindo incluir, consultar e excluir bolões de apostas.
 
 ## Requisitos
 
@@ -41,4 +41,4 @@ Para obter a documentação completa desta API no estilo Swagger, [use este link
 
 ## Autor
 
-Este projeto foi desenvolvido por Marcio Motta e pode ser encontrado no [GitHub](https://github.com/marciolmcavalcanti/app_back).
+Este projeto foi desenvolvido por [Marcio Motta](https://www.linkedin.com/in/marcio-motta) e pode ser encontrado no [GitHub](https://github.com/marciolmcavalcanti/app_back).

@@ -7,22 +7,29 @@ from schemas import ParticipanteSchema
 class BolaoSchema(BaseModel):
     """ Define como um novo bolão a ser inserido deve ser representado
     """
-    nome: str = "Bolão Mega Sena"
+    nome: str = "Mega Sena"
     qtd_cotas: Optional[int] = 15
     valor: float = 10.00
 
 
-class BolaoBuscaSchema(BaseModel):
-    """ Define como deve ser a estrutura que representa a busca. Que será
+class BolaoBuscaSchemaByName(BaseModel):
+    """ Define como deve ser a estrutura que representa a busca, que será
         feita apenas com base no nome do bolão.
     """
     nome: str = "Mega Sena"
 
 
+class BolaoBuscaSchemaById(BaseModel):
+    """ Define como deve ser a estrutura que representa a busca, que será
+        feita apenas com base no id do bolão.
+    """
+    id: int = 1
+
+
 class ListagemBoloesSchema(BaseModel):
     """ Define como uma listagem de bolões será retornada.
     """
-    boloes:List[BolaoSchema]
+    boloes: List[BolaoSchema]
 
 
 def apresenta_boloes(boloes: List[Bolao]):
@@ -32,6 +39,7 @@ def apresenta_boloes(boloes: List[Bolao]):
     result = []
     for bolao in boloes:
         result.append({
+            "id": bolao.id,
             "nome": bolao.nome,
             "cotas": bolao.qtd_cotas,
             "valor": bolao.valor,
@@ -57,6 +65,7 @@ class BolaoDelSchema(BaseModel):
     """
     message: str
     nome: str
+
 
 def apresenta_bolao(bolao: Bolao):
     """ Retorna uma representação do bolão seguindo o schema definido em

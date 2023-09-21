@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
 from datetime import datetime
 from typing import Union
 
-from  model import Base
+from model import Base
 
 
 class Participante(Base):
@@ -19,7 +19,7 @@ class Participante(Base):
     # um bolao ao participante.
     bolao_id = Column(Integer, ForeignKey("bolao.pk_bolao"), nullable=False)
 
-    def __init__(self, bolao_id:int, nome:str, cotas:int, data_insercao:Union[DateTime, None] = None):
+    def __init__(self, bolao_id: int, nome: str, cotas: int, data_insercao: Union[DateTime, None] = None):
         """
         Adiciona um Participante
 
